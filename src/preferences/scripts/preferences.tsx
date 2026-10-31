@@ -31,7 +31,6 @@ function save_options() {
 }
 
 function restore_options() {
-  
   chrome.storage.local.get(
     {
       jsoninfo: JSON.stringify(defaultJson),
@@ -42,7 +41,7 @@ function restore_options() {
         jsonTextArea.value = JSON.stringify(JSON.parse(options.jsoninfo), null, 2);
       } catch (e) {
         if (e.message.indexOf('Unexpected end of JSON input') !== -1) {
-        console.log(`Error parsing JSON: ${e} DataError: ${options.jsoninfo}`);
+          console.log(`Error parsing JSON: ${e} DataError: ${options.jsoninfo}`);
         }
         jsonTextArea.value = JSON.stringify(defaultJson, null, 2);
       }

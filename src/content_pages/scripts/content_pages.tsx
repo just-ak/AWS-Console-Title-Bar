@@ -1,4 +1,12 @@
-import { debugLog, getAccount, getAdditionalLinks, getAllAccounts, IAdditionalLinks, isElementLoaded, saveAllAccounts } from "../../common/reference";
+import {
+  debugLog,
+  getAccount,
+  getAdditionalLinks,
+  getAllAccounts,
+  IAdditionalLinks,
+  isElementLoaded,
+  saveAllAccounts,
+} from '../../common/reference';
 
 export interface AccountDetails {
   id: string;
@@ -35,8 +43,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 //                                                                                                                            /$$  \ $$
 //                                                                                                                           |  $$$$$$/
 //                                                                                                                            \______/
-//       
-
+//
 
 function disablePaddingBlockEndStyles() {
   // Iterate through all stylesheets
@@ -146,7 +153,6 @@ function addAccountDetailsToPage(accountId: string) {
   } else {
     console.warn('Unable to find Account Id');
   }
-
 }
 function getCookie(name: string): string | null {
   const value = `; ${document.cookie}`;
@@ -177,13 +183,10 @@ if (!window.location.href.includes('awsapps.com/start')) {
   isElementLoaded('[data-testid="awsc-nav-regions-menu-button"]').then((selector) => {
     const accountNumber = getAWSUserInfoAccountNumber();
     addAccountDetailsToPage(accountNumber);
-
-
-
   });
 }
 function waitForPageComplete(): Promise<void> {
-  return new Promise<void>(resolve => {
+  return new Promise<void>((resolve) => {
     let timeout;
     const observer = new MutationObserver(() => {
       clearTimeout(timeout);
@@ -197,7 +200,7 @@ function waitForPageComplete(): Promise<void> {
       childList: true,
       subtree: true,
       attributes: true,
-      characterData: true
+      characterData: true,
     });
   });
 }
@@ -227,7 +230,7 @@ afterPageProcessing();
 
 if (window.location.href.includes('awsapps.com/start')) {
   const handleAccountList = (dataBlock: Element) => {
-    let newJsonData = {};
+    const newJsonData = {};
     Array.from(dataBlock.children).forEach((element) => {
       const accountNameElement = element.querySelector('strong').querySelector('div').innerHTML;
       const accountName = accountNameElement ? accountNameElement : 'Unknown Account Name';
@@ -250,7 +253,7 @@ if (window.location.href.includes('awsapps.com/start')) {
       saveAllAccounts({ ...jsonData, ...newJsonData });
       getAllAccounts();
     });
-  }
+  };
 
   // Create a MutationObserver to watch for changes in the DOM
   const observer = new MutationObserver((mutationsList, observer) => {
@@ -267,4 +270,3 @@ if (window.location.href.includes('awsapps.com/start')) {
   // Start observing the document body for child list changes
   observer.observe(document.body, { childList: true, subtree: true });
 }
-

@@ -25,7 +25,9 @@
     "deploy": "npm run build && wrangler pages deploy ./dist",
     "dev": "vite",
     "lint": "eslint .",
-    "preview": "npm run build && wrangler pages dev ./dist"
+    "preview": "npm run build && wrangler pages dev ./dist",
+    "upgrade": "npx npm-check-updates -u --target minor",
+    "upgrade:major": "npx npm-check-updates -u --target latest"
   },
   "type": "module",
   "version": "7.8.19"
