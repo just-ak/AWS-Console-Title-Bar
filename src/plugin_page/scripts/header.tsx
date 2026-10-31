@@ -5,7 +5,7 @@ import { resizeBody } from './body';
 import { disarmAll } from './ui';
 
 const HELP_URL = 'https://aws-console-title-bar.akfdev.com/';
-const GITHUB_URL = 'https://github.com/just-ak/AWS-Console-Tittle-Bar';
+const GITHUB_URL = 'https://github.com/just-ak/AWS-Console-Title-Bar';
 
 function openInNewTab(url: string): void {
   if (typeof browser !== 'undefined') {

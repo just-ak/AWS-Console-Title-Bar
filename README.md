@@ -126,7 +126,7 @@ Access the Chrome Web Store for more information:
 
 ## Issues
 
-https://github.com/just-ak/AWS-Console-Tittle-Bar/issues
+https://github.com/just-ak/AWS-Console-Title-Bar/issues
 
 ## Manifest V3 Migration
 

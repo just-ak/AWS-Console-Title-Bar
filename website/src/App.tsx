@@ -16,8 +16,8 @@ const CHROME_URL =
   "https://chromewebstore.google.com/detail/aws-console-title-bar/jhenfbkjfncfbimbkhakchbdefigenfp";
 const FIREFOX_URL =
   "https://addons.mozilla.org/en-GB/firefox/addon/aws-console-title-bar/";
-const REPO_URL = "https://github.com/just-ak/AWS-Console-Tittle-Bar";
-const ISSUES_URL = "https://github.com/just-ak/AWS-Console-Tittle-Bar/issues";
+const REPO_URL = "https://github.com/just-ak/AWS-Console-Title-Bar";
+const ISSUES_URL = "https://github.com/just-ak/AWS-Console-Title-Bar/issues";
 
 function FirefoxIcon() {
   return (

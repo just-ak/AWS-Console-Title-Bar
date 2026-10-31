@@ -44,7 +44,7 @@
   "main": "index.js",
   "name": "aws-console-tittle-bar",
   "private": false,
-  "repository": "git@github.com:just-ak/AWS-Console-Tittle-Bar.git",
+  "repository": "git@github.com:just-ak/AWS-Console-Title-Bar.git",
   "scripts": {
     "archive": "./scripts/archive.sh",
     "build": "rm -rf dist && npm run sync-versions && webpack --mode production",
