@@ -1,41 +1,415 @@
-#url-list-boarder {
-    margin: 0px 10px 0px 10px;
-    padding-left: 2px;
-    padding-right: 2px;
-    border: 1px solid rgb(247, 232, 232);
-    text-align: center;
+/* =========================================================================
+   urlList.css — the saved-links panel (filter toolbar + grouped list)
+   ========================================================================= */
+
+.url-panel {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  background-color: var(--c-bg-raised);
+  box-shadow: var(--shadow-1);
 }
 
+/* --- Toolbar ------------------------------------------------------------ */
 
-#url-list {
-    height: 250px;
-    overflow-y: auto;
-    overflow-x: hidden;
+.url-panel__toolbar {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-3);
+  border-bottom: 1px solid var(--c-border);
+  background-color: var(--c-bg-subtle);
 }
 
+.search {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.search__icon {
+  position: absolute;
+  top: 50%;
+  left: var(--sp-4);
+  width: 12px;
+  height: 12px;
+  color: var(--c-text-faint);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.search__input {
+  width: 100%;
+  min-height: var(--hit-target);
+  padding: var(--sp-2) var(--sp-7) var(--sp-2) 26px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  background-color: var(--c-bg-raised);
+  color: var(--c-text);
+  font-size: var(--fs-md);
+  transition: border-color var(--speed) var(--ease),
+    box-shadow var(--speed) var(--ease);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.search__input::placeholder {
+  color: var(--c-text-faint);
+}
+
+/* The native search clear widget duplicates our own button. */
+.search__input::-webkit-search-cancel-button,
+.search__input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.search__input:hover {
+  border-color: var(--c-border-strong);
+}
+
+.search__input:focus {
+  border-color: var(--c-interactive);
+  box-shadow: 0 0 0 3px var(--c-interactive-subtle);
+  outline: none;
+}
+
+.search__input:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 1px;
+}
+
+.search__clear {
+  position: absolute;
+  top: 50%;
+  right: var(--sp-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-pill);
+  background-color: transparent;
+  color: var(--c-text-muted);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.search__clear:hover {
+  background-color: var(--c-bg-active);
+  color: var(--c-text);
+}
+
+/* --- Icon button (collapse all) ----------------------------------------- */
+
+.icon-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: var(--hit-target);
+  height: var(--hit-target);
+  padding: 0;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  background-color: var(--c-bg-raised);
+  color: var(--c-text-muted);
+  cursor: pointer;
+  transition: background-color var(--speed) var(--ease),
+    color var(--speed) var(--ease), border-color var(--speed) var(--ease);
+}
+
+.icon-button:hover {
+  border-color: var(--c-border-strong);
+  background-color: var(--c-bg-hover);
+  color: var(--c-text);
+}
+
+.icon-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* --- Scroll region ------------------------------------------------------ */
+
+#url-list-scroll {
+  flex: 1 1 auto;
+  min-height: 72px;
+  /* Grows with content up to ~9 rows, then scrolls. No more fixed 250px
+     void under a two-item list. */
+  max-height: 268px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+#url-list-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+#url-list-scroll::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: var(--r-pill);
+  background-color: var(--c-border-strong);
+  background-clip: content-box;
+}
+
+.url-list {
+  padding: var(--sp-2) 0;
+}
+
+/* --- Group ------------------------------------------------------------- */
+
+.url-group + .url-group {
+  margin-top: var(--sp-2);
+  border-top: 1px solid var(--c-border);
+  padding-top: var(--sp-2);
+}
+
+/* Don't leave a stray divider at the top when the filter hides the groups
+   above. */
+.url-group[hidden] + .url-group {
+  margin-top: 0;
+  border-top: 0;
+  padding-top: 0;
+}
+
+/* The whole group row is one button: toggles collapse, and in edit mode
+   also loads the group into the Groups form. */
 #url-list .group-title {
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  width: 100%;
+  min-height: var(--hit-target);
+  margin: 0;
+  padding: var(--sp-2) var(--sp-4);
+  border: 0;
+  border-left: 3px solid var(--group-rail, var(--c-rail-1));
+  background-color: transparent;
+  color: var(--c-text);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--speed-fast) var(--ease);
 }
 
 #url-list .group-title:hover {
-    background-color: #c257b7;
+  /* Was a saturated #c257b7 fill under black text (~3.3:1). Now a tinted
+     surface that keeps text contrast intact. */
+  background-color: var(--c-bg-hover);
 }
+
+#url-list .group-title:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: -2px;
+}
+
+.url-group__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.url-group__count {
+  flex: 0 0 auto;
+  min-width: 18px;
+  padding: 0 var(--sp-2);
+  border-radius: var(--r-pill);
+  background-color: var(--c-bg-active);
+  color: var(--c-text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-align: center;
+}
+
+.chevron {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--c-text-muted);
+  border-bottom: 1.5px solid var(--c-text-muted);
+  transform: rotate(45deg);
+  transform-origin: 60% 60%;
+  transition: transform var(--speed) var(--ease);
+}
+
+.group-title[aria-expanded="false"] .chevron {
+  transform: rotate(-45deg);
+}
+
+.url-group__items {
+  padding: var(--sp-1) 0 var(--sp-2);
+}
+
+/* --- Item --------------------------------------------------------------- */
 
 #url-list .url-item {
-    display: flex;
-    margin-left: 20px;
-    width: 100%;
-    font-size: 1em;
-    text-align: left;
-    cursor: pointer;
-    overflow: hidden;
-    user-select: none;
+  /* The old rule was `margin-left: 20px; width: 100%`, which pushed every
+     row 20px past its container so hover fills were clipped. Padding on an
+     auto-width flex row keeps the fill inside the box. */
+  position: relative;
+  display: flex;
+  margin: 0;
+  padding: 0 var(--sp-4) 0 0;
 }
 
-#url-list .url-item:hover {
-    background-color: #57c264;
+#url-list .url-link {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  width: 100%;
+  min-height: 26px;
+  padding: var(--sp-2) var(--sp-4) var(--sp-2) 30px;
+  border: 0;
+  border-left: 3px solid transparent;
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  background-color: transparent;
+  color: var(--c-text);
+  font-size: var(--fs-md);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--speed-fast) var(--ease),
+    color var(--speed-fast) var(--ease);
 }
 
-#url-list .url-item:active {
-    opacity: 0.6;
+/* Hairline rail connecting items to their group. */
+#url-list .url-item::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 14px;
+  width: 1px;
+  background-color: var(--c-border);
+  content: "";
+}
+
+#url-list .url-link:hover {
+  /* Was a flat #57c264 green fill. */
+  background-color: var(--c-interactive-subtle);
+  color: var(--c-interactive-hover);
+}
+
+#url-list .url-link:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: -2px;
+}
+
+#url-list .url-link:active {
+  background-color: var(--c-bg-active);
+}
+
+.url-link__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Affordance that appears on hover/focus: open-in-new-tab in run mode,
+   pencil in edit mode. */
+.url-link__action {
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+  color: var(--c-text-faint);
+  opacity: 0;
+  transition: opacity var(--speed) var(--ease);
+}
+
+#url-list .url-link:hover .url-link__action,
+#url-list .url-link:focus-visible .url-link__action {
+  opacity: 1;
+}
+
+.url-link__action--edit {
+  display: none;
+}
+
+body[data-mode="edit"] .url-link__action--open {
+  display: none;
+}
+
+body[data-mode="edit"] .url-link__action--edit {
+  display: block;
+}
+
+/* Container-backed groups get a marker so you know a click opens in a
+   Firefox container. */
+.url-group--container .url-group__name::after {
+  margin-left: var(--sp-3);
+  padding: 0 var(--sp-2);
+  border: 1px solid var(--c-border-strong);
+  border-radius: var(--r-sm);
+  color: var(--c-text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  content: "container";
+}
+
+/* --- Drag and drop ----------------------------------------------------- */
+
+#url-list .url-link.is-dragging {
+  opacity: 0.45;
+}
+
+#url-list .url-item.is-drop-target {
+  box-shadow: inset 0 -2px 0 0 var(--c-interactive);
+}
+
+#url-list .url-item.is-drop-target-above {
+  box-shadow: inset 0 2px 0 0 var(--c-interactive);
+}
+
+/* --- Empty / status ---------------------------------------------------- */
+
+.url-list__empty {
+  padding: var(--sp-7) var(--sp-6);
+  color: var(--c-text-muted);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  text-align: center;
+}
+
+.url-list__empty strong {
+  display: block;
+  margin-bottom: var(--sp-2);
+  color: var(--c-text);
+  font-size: var(--fs-md);
+}
+
+.url-list__status {
+  flex: 0 0 auto;
+  padding: 0 var(--sp-4);
+  color: var(--c-text-muted);
+  font-size: var(--fs-sm);
+  text-align: left;
+}
+
+.url-list__status:not(:empty) {
+  padding: var(--sp-3) var(--sp-4);
+  border-top: 1px solid var(--c-border);
+  background-color: var(--c-bg-subtle);
+}
+
+/* The settings panel and the list have to share a 600px popup. Give the
+   list less room while the panel is open rather than clipping the footer,
+   but keep a floor of roughly four rows so it stays usable. */
+body[data-mode="edit"] #url-list-scroll {
+  min-height: 104px;
+  max-height: 136px;
 }

@@ -1,30 +1,22 @@
-#url-management {
-  margin: 0px 10px 0px 10px;
-}
-
-#add-url-container {
-  font-size: 1em;
-  text-align: center;
-  line-height: 1.2em;
-  height: 100%;
-}
-
-#add-url-container input {
-  width: 70%;
-  margin: 2px;
-}
+/* =========================================================================
+   urlForm.css — URL tab
+   The old `.buttons-container { position: absolute; bottom: 0 }` resolved
+   against the initial containing block (no positioned ancestor existed),
+   pinning the buttons over the footer. They are in flow now.
+   ========================================================================= */
 
 #url-form {
-  height: 100%;
-  width: 100%;
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
-  font-size: 10px;
+  width: 100%;
 }
 
-#url-form .buttons-container {
-  position: absolute;
-  padding-bottom: 42px;
-  bottom: 0;
-  right: 15px;
+#url-management {
+  flex: 1 1 auto;
+  margin: 0;
+}
+
+#url-form .field > label {
+  flex: 0 0 auto;
 }

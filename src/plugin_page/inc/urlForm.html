@@ -1,27 +1,73 @@
-<form id="url-form">
+<form id="url-form" novalidate>
   <div id="url-management">
-    <h2>URL Management</h2>
-    <div class="form-group">
-      <label for="url-input">URL: </label>
-      <input type="text" id="url-input" required>
+    <h2 class="panel__title">URL Management</h2>
+    <p class="panel__hint">
+      Pick a link in the list above to edit it, or fill the fields and choose
+      Save as New.
+    </p>
+
+    <div class="field">
+      <label for="url-input">URL</label>
+      <input
+        type="text"
+        id="url-input"
+        class="text-input"
+        inputmode="url"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="console.aws.amazon.com"
+        aria-describedby="url-form-status"
+        required
+      />
     </div>
-    <div class="form-group">
-      <label for="title-input">Title: </label>
-      <input type="text" id="title-input" required>
+
+    <div class="field">
+      <label for="title-input">Title</label>
+      <input
+        type="text"
+        id="title-input"
+        class="text-input"
+        autocomplete="off"
+        placeholder="Production console"
+        aria-describedby="url-form-status"
+        required
+      />
     </div>
-    <div class="form-group">
-      <label for="group-select">Group: </label>
-      <div class="group-select-container">
-        <select id="group-select">
-          <option value="Default">Default</option>
-        </select>
-      </div>
+
+    <div class="field">
+      <label for="group-select">Group</label>
+      <select id="group-select" class="select-input">
+        <option value="Default">Default</option>
+      </select>
     </div>
+
+    <p
+      id="url-form-status"
+      class="form-status"
+      role="status"
+      aria-live="polite"
+    ></p>
   </div>
+
   <div class="buttons-container">
-    <button type="submit" data-commit-type="save-as-new" class="modern-button">Save as New</button>
-    <button type="submit" data-commit-type="save" class="modern-button">Save</button>
-    <button type="submit" data-commit-type="delete" class="modern-button">Delete</button>
+    <button type="submit" data-commit-type="save-as-new" class="modern-button">
+      Save as New
+    </button>
+    <button
+      type="submit"
+      data-commit-type="save"
+      class="modern-button modern-button--primary"
+    >
+      Save
+    </button>
+    <button
+      type="submit"
+      data-commit-type="delete"
+      class="modern-button modern-button--danger"
+      data-confirm-label="Confirm delete"
+      formnovalidate
+    >
+      Delete
+    </button>
   </div>
 </form>
-

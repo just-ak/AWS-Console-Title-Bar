@@ -1,14 +1,39 @@
-<form id="preferences-form">
-    <div id="preferences-management">
-        <h2>AWS Console Preferences</h2>
-        <label for="aws-console-compress">Compress Mode: </label>
-        <label class="switch">
-            <input type="checkbox" id="aws-console-compress">
-            <span class="slider round"></span>
-        </label>
-        <br>
-        <div class="buttons-container">
-            <button type="submit"  data-commit-type="save"  id="save-group-button" class="modern-button">Save</button>
-        </div>
+<form id="preferences-form" novalidate>
+  <div id="preferences-management">
+    <h2 class="panel__title">AWS Console Preferences</h2>
+    <p class="panel__hint">
+      Applies to the banner injected into the AWS console.
+    </p>
+
+    <div class="switch-row">
+      <span class="switch-row__label">
+        <label for="aws-console-compress">Compress mode</label>
+        <span class="switch-row__help"
+          >Use a slimmer title bar to reclaim vertical space.</span
+        >
+      </span>
+      <label class="switch">
+        <input type="checkbox" id="aws-console-compress" />
+        <span class="slider round"></span>
+      </label>
     </div>
+
+    <p
+      id="preferences-status"
+      class="form-status"
+      role="status"
+      aria-live="polite"
+    ></p>
+
+    <div class="buttons-container">
+      <button
+        type="submit"
+        data-commit-type="save"
+        id="save-group-button"
+        class="modern-button modern-button--primary"
+      >
+        Save
+      </button>
+    </div>
+  </div>
 </form>

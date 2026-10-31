@@ -1,26 +1,76 @@
-<form id="group-form">
+<form id="group-form" novalidate>
   <div id="group-management">
-    <h2>Group Management</h2>
-    <label for="url-input">Group: </label>
-    <input type="text" id="new-group-input" data-record-id="">
-    <br>
-    <label for="use-container">Use Containers for Group: </label>
-    <label class="switch">
-      <input type="checkbox" id="use-container">
-      <span class="slider round"></span>
-    </label>
-    <br>
-    <label for="sort-urls-switch">Sort A-Z: </label>
-    <label class="switch">
-      <input type="checkbox" id="sort-urls-switch">
-      <span class="slider round"></span>
-    </label>
-    <br>
-    <div id="group-warning"></div>
+    <h2 class="panel__title">Group Management</h2>
+    <p class="panel__hint">
+      Pick a group heading in the list above to edit it, or type a name and
+      choose Save as New.
+    </p>
+
+    <div class="field">
+      <label for="new-group-input">Name</label>
+      <input
+        type="text"
+        id="new-group-input"
+        class="text-input"
+        data-record-id=""
+        autocomplete="off"
+        placeholder="andrew@example.com"
+        aria-describedby="group-warning"
+      />
+    </div>
+
+    <div class="switch-row">
+      <span class="switch-row__label">
+        <label for="use-container">Use containers</label>
+        <span class="switch-row__help"
+          >Open this group's links in a Firefox container.</span
+        >
+      </span>
+      <label class="switch">
+        <input type="checkbox" id="use-container" />
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <div class="switch-row">
+      <span class="switch-row__label">
+        <label for="sort-urls-switch">Sort A&ndash;Z</label>
+        <span class="switch-row__help"
+          >Otherwise links keep their drag order.</span
+        >
+      </span>
+      <label class="switch">
+        <input type="checkbox" id="sort-urls-switch" />
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <div id="group-warning" role="status" aria-live="polite"></div>
+
     <div class="buttons-container">
-      <button type="submit" data-commit-type="save-as-new" class="modern-button">Save as New</button>
-      <button type="submit" data-commit-type="save" class="modern-button">Save</button>
-      <button type="submit" data-commit-type="delete" class="modern-button">Delete</button>
+      <button
+        type="submit"
+        data-commit-type="save-as-new"
+        class="modern-button"
+      >
+        Save as New
+      </button>
+      <button
+        type="submit"
+        data-commit-type="save"
+        class="modern-button modern-button--primary"
+      >
+        Save
+      </button>
+      <button
+        type="submit"
+        data-commit-type="delete"
+        class="modern-button modern-button--danger"
+        data-confirm-label="Confirm delete"
+        formnovalidate
+      >
+        Delete
+      </button>
     </div>
   </div>
 </form>

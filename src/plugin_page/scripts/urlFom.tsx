@@ -1,158 +1,294 @@
-import { getAdditionalLinks, saveAdditionalLinks, onUpdated, onError, debugLog, } from '../../common/reference';
-import { urlList, cogIcon, urlForm, groupSelect, newGroupInput } from './dom';
+import { getAdditionalLinks, saveAdditionalLinks, onUpdated, onError, debugLog } from '../../common/reference';
+import { urlList, cogIcon, urlForm, groupSelect, urlFormStatus } from './dom';
 import { createContainer } from './firefox';
 import { updatePopupUrls } from './pluginPage';
+import { confirmAction, normalizeUrl, setStatus } from './ui';
+import { activateTab } from './tabs';
+
+const urlInput = () => document.getElementById('url-input') as HTMLInputElement;
+const titleInput = () => document.getElementById('title-input') as HTMLInputElement;
+
+function isRunMode(): boolean {
+  return cogIcon.dataset.action === 'runMode' || cogIcon.dataset.action === undefined;
+}
+
+/** Largest existing numeric id, or -1 for an empty collection. */
+function maxId(records: { id: string }[]): number {
+  return records.reduce((highest, item) => {
+    const value = parseInt(`${item.id}`, 10);
+    return isNaN(value) ? highest : Math.max(highest, value);
+  }, -1);
+}
+
+function openUrl(target: HTMLButtonElement): void {
+  const chosenPage = normalizeUrl(target.dataset.url || '') || target.dataset.url;
+  const groupId = target.dataset.groupId;
+
+  getAdditionalLinks()
+    .then((accountDetails) => {
+      const groupDetails = (accountDetails['groups'] || []).filter((group) => `${group.id}` === `${groupId}`)[0];
+      const useContainer = groupDetails && groupDetails.useContainerSwitch === 'true';
+
+      if (!useContainer || typeof browser === 'undefined' || !browser.contextualIdentities) {
+        chrome.tabs.create({ url: chosenPage }, onUpdated);
+        return;
+      }
+
+      const containerName = groupDetails.title;
+      browser.contextualIdentities
+        .query({})
+        .then((identities) => {
+          const identity = identities.filter((i) => i.name === containerName)[0];
+          if (identity && identity.cookieStoreId) {
+            browser.tabs
+              .create({
+                url: chosenPage,
+                cookieStoreId: identity.cookieStoreId,
+              })
+              .then(onUpdated, onError);
+            return;
+          }
+          createContainer(containerName)
+            .then((id) => {
+              browser.tabs.create({ url: chosenPage, cookieStoreId: id }).then(onUpdated, onError);
+            })
+            .catch((error) => {
+              debugLog('Error creating container:', error);
+              browser.tabs.create({ url: chosenPage }).then(onUpdated, onError);
+            });
+        })
+        .catch((error) => {
+          debugLog('Error querying containers:', error);
+          browser.tabs.create({ url: chosenPage }).then(onUpdated, onError);
+        });
+    })
+    .catch((error) => debugLog('Failed to open link:', error));
+}
+
+function loadIntoForm(target: HTMLButtonElement): void {
+  urlForm.dataset.action = 'edit';
+
+  const url = urlInput();
+  const title = titleInput();
+  url.value = target.dataset.url || '';
+  url.dataset.recordId = target.dataset.recordId || '';
+  url.setAttribute('aria-invalid', 'false');
+  // Was `target.innerText`, which now also contains the icon markup.
+  title.value = target.dataset.title || '';
+  title.setAttribute('aria-invalid', 'false');
+  groupSelect.value = target.dataset.groupId || '';
+
+  activateTab('URLForm');
+  setStatus(urlFormStatus, `Editing "${title.value}".`, 'info', 0);
+}
 
 export function initializeurlForm() {
-    document.addEventListener('DOMContentLoaded', function () {
-        updateGroupListInUrlsSetting();
-        urlList.addEventListener('click', async function (e) {
-            if ((e.target as HTMLElement).classList.contains('url-link')) {
-                const chosenPage = (e.target as HTMLElement).dataset.url;
-                const recordId = (e.target as HTMLElement).dataset.recordId;
-                const containerTitle = (e.target as HTMLElement).innerText;
-                const groupId = (e.target as HTMLElement).dataset.groupId;
-                const groupDetails = await getAdditionalLinks().then((accountDetails) => {
-                    const group = accountDetails['groups'].find((group) => `${group.id}` === `${groupId}`);
-                    return group;
-                });
-                if (cogIcon.dataset.action === 'runMode' || cogIcon.dataset.action === undefined) {
-                    try {
-                        browser.contextualIdentities
-                        if (groupDetails.useContainerSwitch === "true") {
-                            browser.contextualIdentities.query({})
-                                .then((identities) => {
-                                if (!identities.length) {
-                                    createContainer(groupDetails.title).then((id) => {
-                                        browser.tabs.create({ url: chosenPage, cookieStoreId: id }).then(onUpdated, onError);
-                                    }).catch((error) => {
-                                        debugLog('Error creating container:', error);
-                                        browser.tabs.create({ url: chosenPage }).then(onUpdated, onError);
-                                    });
-                                } else {
-                                    const identity = identities.filter((i) => i.name === groupDetails.title )[0];
-                                    if (identity !== undefined && identity.cookieStoreId !== undefined) {
-                                    browser.tabs.create({
-                                        url: chosenPage,
-                                        cookieStoreId: identity.cookieStoreId,
-                                      });
-                                    } else {
-                                        debugLog('No cookie store id found');
-                                        createContainer(groupDetails.title).then((id) => {
-                                            browser.tabs.create({ url: chosenPage, cookieStoreId: id }).then(onUpdated, onError);
-                                        }).catch((error) => {
-                                            debugLog('Error creating container:', error);
-                                            browser.tabs.create({ url: chosenPage }).then(onUpdated, onError);
-                                        });
-                                    }
-                                }
-                            }).catch((error) => {
-                                debugLog('Error querying containers (B):', error);
-                            });
-                        } else {
-                            chrome.tabs.create({ url: chosenPage }).then(onUpdated, onError);
-                        }
-                    } catch (error) {
-                        debugLog('Failed to create container and open tab (C):', error);
-                    }
-                } else {
-                    (document.getElementById('url-form') as HTMLFormElement).dataset.action = 'edit';
-                    (document.getElementById('url-input') as HTMLInputElement).value = chosenPage;
-                    (document.getElementById('url-input') as HTMLInputElement).dataset.recordId = recordId;
-                    (document.getElementById('title-input') as HTMLInputElement).value = containerTitle;
-                    (document.getElementById('group-select') as HTMLSelectElement).value = groupId;
-                    (document.getElementById('new-group-input') as HTMLInputElement).value = '';
-                }
-            }
-        });
+  document.addEventListener('DOMContentLoaded', function () {
+    updateGroupListInUrlsSetting();
 
-        urlForm.addEventListener('submit', function (event) {
-            event.preventDefault();
+    urlList.addEventListener('click', function (e) {
+      // `closest` rather than `e.target`: the row is a <button> with child
+      // elements, so the click target is often the label or the icon.
+      const target = (e.target as HTMLElement).closest('.url-link') as HTMLButtonElement;
+      if (!target) return;
 
-            const urlInput = document.getElementById('url-input') as HTMLInputElement;
-            const titleInput = document.getElementById('title-input') as HTMLInputElement;
-            const commitType = (event.submitter as HTMLButtonElement).dataset.commitType;
-            const url = urlInput.value;
-            const title = titleInput.value;
-            const groupId = groupSelect.value;
-            const recordId = urlInput.dataset.recordId;
-            if (title === '') {
-                // alert('Group Title is required');
-                return;
-            }
-            getAdditionalLinks().then((accountDetails) => {
-                if (!accountDetails['urls']) {
-                    accountDetails['urls'] = [];
-                }
-                if (commitType === 'save-as-new') {
-                    const maxId = Math.max(...accountDetails['urls'].map((item) => parseInt(item.id, 10)));
-                    accountDetails['urls'].push({ id: (maxId + 1).toString(), url: url, title: title, groupId: groupId });
-                } else if (commitType === 'save') {
-                    const index = accountDetails['urls'].findIndex((item) => item.id === recordId);
-                    if (index !== -1) {
-                        accountDetails['urls'][index] = { id: recordId, url: url, title: title, groupId: groupId };
-                    }
-                } else if (commitType === 'delete') {
-                    accountDetails['urls'] = accountDetails['urls'].filter((item) => item.id !== recordId);
-                }
+      if (isRunMode()) {
+        openUrl(target);
+      } else {
+        loadIntoForm(target);
+      }
+    });
 
-                // Update groups if a new group has been created
-                if (newGroupInput.value && !accountDetails['groups'][newGroupInput.value]) {
-                    accountDetails['groups'][newGroupInput.value] = { sortUrls: false, useContainer: false };
-                }
+    urlForm.addEventListener('submit', function (event) {
+      event.preventDefault();
 
-                saveAdditionalLinks(accountDetails);
-                updatePopupUrls();
+      const submitter = event.submitter as HTMLButtonElement;
+      const commitType = submitter ? submitter.dataset.commitType : 'save';
+      const url = urlInput();
+      const title = titleInput();
+      const recordId = url.dataset.recordId;
+
+      if (commitType === 'delete') {
+        if (!recordId) {
+          setStatus(urlFormStatus, 'Pick a link in the list above to delete it.', 'error');
+          return;
+        }
+        if (!confirmAction(submitter, urlFormStatus, `Delete "${title.value}"? This cannot be undone.`)) {
+          return;
+        }
+      } else {
+        const normalized = normalizeUrl(url.value);
+        url.setAttribute('aria-invalid', normalized ? 'false' : 'true');
+        if (!normalized) {
+          // Used to return silently, so the form looked broken.
+          setStatus(urlFormStatus, 'Enter a web address, for example console.aws.amazon.com.', 'error');
+          url.focus();
+          return;
+        }
+        url.value = normalized;
+
+        const hasTitle = title.value.trim() !== '';
+        title.setAttribute('aria-invalid', hasTitle ? 'false' : 'true');
+        if (!hasTitle) {
+          setStatus(urlFormStatus, 'Give the link a title so you can recognise it.', 'error');
+          title.focus();
+          return;
+        }
+
+        if (commitType === 'save' && !recordId) {
+          setStatus(urlFormStatus, 'Nothing selected to update. Use Save as New, or pick a link above.', 'error');
+          return;
+        }
+      }
+
+      getAdditionalLinks()
+        .then((accountDetails) => {
+          if (!accountDetails['urls']) accountDetails['urls'] = [];
+          const urls = accountDetails['urls'];
+          const groupId = groupSelect.value;
+          let message = '';
+
+          if (commitType === 'save-as-new') {
+            urls.push({
+              id: `${maxId(urls) + 1}`,
+              url: url.value,
+              title: title.value.trim(),
+              groupId: groupId,
             });
-        });
-
-        urlList.addEventListener('dragstart', function (e) {
-            if ((e.target as HTMLElement).classList.contains('url-link')) {
-                e.dataTransfer.setData('text/plain', (e.target as HTMLElement).dataset.recordId);
-                e.dataTransfer.effectAllowed = 'move';
+            message = `Added "${title.value.trim()}".`;
+          } else if (commitType === 'save') {
+            const index = urls.findIndex((item) => `${item.id}` === `${recordId}`);
+            if (index === -1) {
+              setStatus(urlFormStatus, 'That link no longer exists.', 'error');
+              return;
             }
-        });
+            urls[index] = {
+              id: recordId,
+              url: url.value,
+              title: title.value.trim(),
+              groupId: groupId,
+            };
+            message = `Saved "${title.value.trim()}".`;
+          } else if (commitType === 'delete') {
+            const removed = urls.filter((item) => `${item.id}` === `${recordId}`)[0];
+            accountDetails['urls'] = urls.filter((item) => `${item.id}` !== `${recordId}`);
+            message = `Deleted "${removed ? removed.title : 'link'}".`;
+            urlForm.reset();
+            delete url.dataset.recordId;
+            urlForm.dataset.action = 'new';
+          }
 
-        urlList.addEventListener('dragover', function (e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        });
+          // Removed here: a block that did
+          //   accountDetails['groups'][newGroupInput.value] = { ... }
+          // which wrote a string key onto the groups *array*. Group creation
+          // belongs to the Groups tab.
 
-        urlList.addEventListener('drop', function (e) {
-            e.preventDefault();
-            const draggedRecordId = e.dataTransfer.getData('text/plain');
-            const target = e.target as HTMLElement;
-            if (target.classList.contains('url-link')) {
-                const targetRecordId = target.dataset.recordId;
-                getAdditionalLinks().then((accountDetails) => {
-                    const urls = accountDetails['urls'];
-                    const draggedIndex = urls.findIndex(item => `${item.id}` === `${draggedRecordId}`);
-                    const targetIndex = urls.findIndex(item => `${item.id}` === `${targetRecordId}`);
-                    if (draggedIndex !== -1 && targetIndex !== -1) {
-                        const [draggedItem] = urls.splice(draggedIndex, 1);
-                        urls.splice(targetIndex, 0, draggedItem);
-                        accountDetails['urls'] = urls;
-                        saveAdditionalLinks(accountDetails).then(() => { updatePopupUrls() });
-                    }
-                });
-            }
+          return saveAdditionalLinks(accountDetails).then(() => {
+            setStatus(urlFormStatus, message, 'success');
+            updatePopupUrls();
+          });
+        })
+        .catch((error) => {
+          debugLog('Error saving link:', error);
+          setStatus(urlFormStatus, 'Could not save. Please try again.', 'error');
         });
     });
+
+    /* --- Drag and drop reordering ------------------------------------- */
+
+    let draggedId: string | null = null;
+
+    function clearDropMarkers(): void {
+      const marked = urlList.querySelectorAll('.is-drop-target, .is-drop-target-above');
+      for (let i = 0; i < marked.length; i++) {
+        marked[i].classList.remove('is-drop-target');
+        marked[i].classList.remove('is-drop-target-above');
+      }
+    }
+
+    urlList.addEventListener('dragstart', function (e) {
+      const target = (e.target as HTMLElement).closest('.url-link') as HTMLButtonElement;
+      if (!target) return;
+      draggedId = target.dataset.recordId || null;
+      e.dataTransfer.setData('text/plain', draggedId || '');
+      e.dataTransfer.effectAllowed = 'move';
+      target.classList.add('is-dragging');
+    });
+
+    urlList.addEventListener('dragend', function (e) {
+      const target = (e.target as HTMLElement).closest('.url-link') as HTMLButtonElement;
+      if (target) target.classList.remove('is-dragging');
+      clearDropMarkers();
+      draggedId = null;
+    });
+
+    urlList.addEventListener('dragover', function (e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+
+      // Visible drop indicator; previously there was none, so you could not
+      // tell where an item would land.
+      const row = (e.target as HTMLElement).closest('.url-item') as HTMLLIElement;
+      clearDropMarkers();
+      if (!row) return;
+      const box = row.getBoundingClientRect();
+      const above = e.clientY < box.top + box.height / 2;
+      row.classList.add(above ? 'is-drop-target-above' : 'is-drop-target');
+    });
+
+    urlList.addEventListener('dragleave', clearDropMarkers);
+
+    urlList.addEventListener('drop', function (e) {
+      e.preventDefault();
+      const droppedId = e.dataTransfer.getData('text/plain') || draggedId;
+      const row = (e.target as HTMLElement).closest('.url-item') as HTMLLIElement;
+      clearDropMarkers();
+      if (!row || !droppedId) return;
+
+      const targetLink = row.querySelector('.url-link') as HTMLButtonElement;
+      const targetId = targetLink ? targetLink.dataset.recordId : null;
+      if (!targetId || targetId === droppedId) return;
+
+      getAdditionalLinks().then((accountDetails) => {
+        const urls = accountDetails['urls'] || [];
+        const from = urls.findIndex((item) => `${item.id}` === `${droppedId}`);
+        const to = urls.findIndex((item) => `${item.id}` === `${targetId}`);
+        if (from === -1 || to === -1) return;
+
+        const [moved] = urls.splice(from, 1);
+        // Dropping onto a row in another group moves the link into that
+        // group, which is what the gesture implies.
+        moved.groupId = targetLink.dataset.groupId;
+        urls.splice(to, 0, moved);
+        accountDetails['urls'] = urls;
+        saveAdditionalLinks(accountDetails).then(() => updatePopupUrls());
+      });
+    });
+  });
 }
 
 export function updateGroupListInUrlsSetting() {
-    getAdditionalLinks().then((accountDetails) => {
-        while (groupSelect.options.length > 0)
-                {groupSelect.options.remove(0);
-                }
-        if (accountDetails['groups'] && Array.isArray(accountDetails['groups'])) {
-            for (const group of accountDetails['groups']) {
-                const option = document.createElement('option');
-                option.value = group.id;                
-                option.text = group.title;
-                groupSelect.add(option);
-            }
-        }
-    });
-};
-
+  getAdditionalLinks().then((accountDetails) => {
+    const previous = groupSelect.value;
+    while (groupSelect.options.length > 0) {
+      groupSelect.options.remove(0);
+    }
+    if (accountDetails['groups'] && Array.isArray(accountDetails['groups'])) {
+      const groups = accountDetails['groups'].slice().sort((a, b) => `${a.title}`.localeCompare(`${b.title}`, 'en'));
+      for (const group of groups) {
+        const option = document.createElement('option');
+        option.value = group.id;
+        option.text = group.title;
+        groupSelect.add(option);
+      }
+    }
+    // Only restore the previous selection if it still exists, otherwise the
+    // <select> ends up showing a blank row.
+    const stillThere = previous && Array.prototype.some.call(groupSelect.options, (o: HTMLOptionElement) => o.value === previous);
+    if (stillThere) {
+      groupSelect.value = previous;
+    } else if (groupSelect.options.length) {
+      groupSelect.selectedIndex = 0;
+    }
+  });
+}

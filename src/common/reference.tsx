@@ -17,7 +17,7 @@ export interface IGroupRecord {
   useContainerSwitch: string;
 }
 
-interface IUrlRecord {
+export interface IUrlRecord {
   id: string;
   title: string;
   url: string;
@@ -31,11 +31,10 @@ export interface IAdditionalLinks {
   preferences: {
     awsConsole: {
       compressMode: boolean;
-    }
+    };
   };
   version: string;
 }
-
 
 export function onUpdated(tab) {
   debugLog(`Updated tab: ${tab.id}`);
@@ -75,7 +74,6 @@ export const isElementLoaded = async (selector) => {
   return document.querySelector(selector);
 };
 
-
 export async function putPopupComms(data: PopupComms) {
   return await new Promise((resolve, reject) => {
     if (data.accountId) {
@@ -114,13 +112,10 @@ export async function getAdditionalLinks() {
           debugLog(`Error in getAdditionalLinks: ${e} \n ${JSON.stringify(response, null, 2)} `);
         }
         resolve(defaultJson);
-
       }
     });
   });
 }
-
-
 
 export async function saveAdditionalLinks(data) {
   return await new Promise((resolve, reject) => {
@@ -164,7 +159,6 @@ export async function getAccount(accountId) {
   );
 }
 
-
 export async function getAllAccounts() {
   return await new Promise((resolve, reject) =>
     chrome.storage.local.get('jsonaccounts', (response) => {
@@ -185,30 +179,30 @@ export async function getAllAccounts() {
 export const defaultJson = {
   urls: [
     {
-      "title": "Google",
-      "url": "https://google.com",
-      "id": "0",
-      "groupId": 0
+      title: 'Google',
+      url: 'https://google.com',
+      id: '0',
+      groupId: 0,
     },
     {
-      "title": "Microsoft",
-      "url": "https://microsoft.com",
-      "id": "1",
-      "groupId": 0
-    }
+      title: 'Microsoft',
+      url: 'https://microsoft.com',
+      id: '1',
+      groupId: 0,
+    },
   ],
   groups: [
     {
-      "id": 0,
-      "title": "Default",
-      "sortUrlsSwitch": "true",
-      "useContainerSwitch": "false"
+      id: 0,
+      title: 'Default',
+      sortUrlsSwitch: 'true',
+      useContainerSwitch: 'false',
     },
   ],
-  version: "5.5.5.1",
+  version: '5.5.5.1',
   preferences: {
     awsConsole: {
-      compressMode: false
-    }
-  }
+      compressMode: false,
+    },
+  },
 };

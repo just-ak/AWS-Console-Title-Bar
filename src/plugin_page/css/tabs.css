@@ -1,44 +1,92 @@
+/* =========================================================================
+   tabs.css — ARIA tablist for the settings panels
+   ========================================================================= */
+
 .tab {
-    display: flex;
-    padding-left:0px;
-    padding-top: 10px;
-    margin-bottom: 0px;
+  display: flex;
+  flex: 0 0 auto;
+  gap: var(--sp-1);
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--c-border);
 }
 
 .tab button {
-    background-color: #fff;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 2px;
-    padding-left:6px;
-    padding-right:6px;
-    margin-left: 0px;
-    margin-right: 0px;
-    font-size: 10px;
-    transition: border-top 0.3s;
-    border: 1px solid #777070;
-    border-bottom: 5px solid transparent;
-    border-radius: 5px 5px 0px 0px;
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 26px;
+  margin: 0;
+  padding: var(--sp-3) var(--sp-2);
+  border: 0;
+  /* The indicator lives on a pseudo-element so the label never shifts
+     between states (the old rule swapped a 5px border on hover). */
+  background-color: transparent;
+  color: var(--c-text-muted);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--speed) var(--ease),
+    background-color var(--speed) var(--ease);
+}
+
+.tab button::after {
+  position: absolute;
+  right: var(--sp-2);
+  bottom: -1px;
+  left: var(--sp-2);
+  height: 2px;
+  border-radius: var(--r-pill);
+  background-color: transparent;
+  content: "";
+  transition: background-color var(--speed) var(--ease);
 }
 
 .tab button:hover {
-    border-top: 5px solid #7b3636;
+  background-color: var(--c-bg-hover);
+  color: var(--c-text);
 }
 
-.tab .active {
-    border-top: 5px solid #0078d7;
-    font-weight: bold;
+.tab button:hover::after {
+  background-color: var(--c-border-strong);
 }
+
+/* `outline: none` used to be set here with no replacement. */
+.tab button:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: -2px;
+  border-radius: var(--r-sm) var(--r-sm) 0 0;
+}
+
+.tab .active,
+.tab button[aria-selected="true"] {
+  color: var(--c-interactive);
+  font-weight: 700;
+}
+
+.tab .active::after,
+.tab button[aria-selected="true"]::after {
+  background-color: var(--c-interactive);
+}
+
+/* --- Panels ------------------------------------------------------------- */
 
 .tabcontent {
-    border-top: none;
-    padding-left:15px;
-    padding-right:15px;
-    padding-top: 13px;
-    padding-bottom: 25px;
-    margin:0px;
-    min-width:40px;
-    min-height:200px;
-    border: 1px solid rgb(68, 68, 68);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 150px;
+  margin: 0;
+  padding: var(--sp-5);
+  border: 1px solid var(--c-border);
+  border-top: 0;
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+  background-color: var(--c-bg-raised);
+}
+
+.tabcontent:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: -3px;
 }

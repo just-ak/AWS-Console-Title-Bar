@@ -1,56 +1,72 @@
+import { body, cogIcon, editMode, githubButton, helpButton, modeBadge, urlForm } from './dom';
 
-import {
-  cogIcon,
-  editMode,
-  githubButton,
-  helpButton,
-  urlForm
-} from './dom';
-
-import {
-  debugLog, onError,
-  onUpdated
-} from '../../common/reference';
+import { debugLog, onError, onUpdated } from '../../common/reference';
 import { resizeBody } from './body';
+import { disarmAll } from './ui';
+
+const HELP_URL = 'https://aws-console-title-bar.akfdev.com/';
+const GITHUB_URL = 'https://github.com/just-ak/AWS-Console-Tittle-Bar';
+
+function openInNewTab(url: string): void {
+  if (typeof browser !== 'undefined') {
+    browser.tabs.create({ url }).then(onUpdated, onError);
+  } else if (typeof chrome !== 'undefined') {
+    chrome.tabs.create({ url }, onUpdated);
+  } else {
+    console.error('Browser API not supported');
+  }
+}
 
 export function initializeHeader() {
-  editMode.style.display = 'none';
-  cogIcon.addEventListener('click', function () {
-    if (cogIcon.dataset.action === 'runMode' || cogIcon.dataset.action === undefined) {
+  /**
+   * Run mode: clicking a link opens it.
+   * Edit mode: clicking a link loads it into the URL form instead.
+   *
+   * That difference used to be invisible. `data-mode` on <body> now drives a
+   * header badge and the per-row icon, and `aria-expanded` reports the state
+   * of the settings panel.
+   */
+  function setMode(mode: 'run' | 'edit'): void {
+    const editing = mode === 'edit';
+
+    cogIcon.dataset.action = editing ? 'editMode' : 'runMode';
+    cogIcon.setAttribute('aria-expanded', editing ? 'true' : 'false');
+
+    const label = document.getElementById('awsso-header-label');
+    if (label) label.textContent = editing ? 'Hide settings' : 'Show settings';
+    cogIcon.title = editing ? 'Hide settings' : 'Show settings';
+
+    editMode.hidden = !editing;
+    body.dataset.mode = mode;
+    if (modeBadge) modeBadge.hidden = !editing;
+
+    if (editing) {
       urlForm.dataset.action = 'new';
-      cogIcon.dataset.action = 'editMode';
-      editMode.style.display = 'block';
-      debugLog('Edit Mode');
     } else {
-      cogIcon.dataset.action = 'runMode';
-      editMode.style.display = 'none';
-      debugLog('Run Mode');
+      disarmAll();
     }
+
+    debugLog(editing ? 'Edit Mode' : 'Run Mode');
     resizeBody();
+  }
+
+  setMode('run');
+
+  cogIcon.addEventListener('click', function () {
+    setMode(cogIcon.dataset.action === 'editMode' ? 'run' : 'edit');
   });
 
+  // Escape closes the settings panel, which is what people expect from a
+  // disclosure in a popup.
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (cogIcon.dataset.action !== 'editMode') return;
+    const active = document.activeElement as HTMLElement;
+    if (active && active.tagName === 'INPUT' && (active as HTMLInputElement).value !== '') return;
+    setMode('run');
+    cogIcon.focus();
+  });
 
-  function openHelpPage() {
-    const helpUrl = 'https://aws-console-title-bar.akfdev.com/';
-    if (typeof browser !== 'undefined') {
-      browser.tabs.create({ url: helpUrl }).then(onUpdated, onError);
-    } else if (typeof chrome !== 'undefined') {
-      chrome.tabs.create({ url: helpUrl }, onUpdated);
-    } else {
-      console.error('Browser API not supported');
-    }
-  }
-
-  function openGitHubPage() {
-    const helpUrl = 'https://github.com/just-ak/AWS-Console-Tittle-Bar';
-    if (typeof browser !== 'undefined') {
-      browser.tabs.create({ url: helpUrl }).then(onUpdated, onError);
-    } else if (typeof chrome !== 'undefined') {
-      chrome.tabs.create({ url: helpUrl }, onUpdated);
-    } else {
-      console.error('Browser API not supported');
-    }
-  }
-  githubButton.addEventListener('click', openGitHubPage);
-  helpButton.addEventListener('click', openHelpPage);
+  githubButton.addEventListener('click', () => openInNewTab(GITHUB_URL));
+  helpButton.addEventListener('click', () => openInNewTab(HELP_URL));
 }

@@ -1,9 +1,39 @@
-<form id="account-form">
-    <div id="containers-management">
-        <h2>FireFox Container Management</h2>
-        <div class="containers-container">
-            <button type="submit" data-commit-type="save" id="clear-containers-button" class="modern-button-warning">Clear All Containers</button>
-            <button type="submit" data-commit-type="save" id="clear-containers-hidden" class="modern-button-hidden">Debug Mode</button>
-        </div>
+<form id="containers-form" novalidate>
+  <div id="containers-management">
+    <h2 class="panel__title">Firefox Container Management</h2>
+
+    <p class="danger-note">
+      <span
+        ><strong>Removes every container in Firefox</strong>, not just the ones
+        this extension created. Any signed-in session held in a container is
+        lost. This cannot be undone.</span
+      >
+    </p>
+
+    <p
+      id="containers-status"
+      class="form-status"
+      role="status"
+      aria-live="polite"
+    ></p>
+
+    <div class="containers-container">
+      <button
+        type="button"
+        id="clear-containers-hidden"
+        class="modern-button-hidden"
+        aria-pressed="false"
+      >
+        Debug logging
+      </button>
+      <button
+        type="button"
+        id="clear-containers-button"
+        class="modern-button-warning"
+        data-confirm-label="Confirm &mdash; delete all"
+      >
+        Clear All Containers
+      </button>
     </div>
+  </div>
 </form>

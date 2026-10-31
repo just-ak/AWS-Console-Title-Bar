@@ -1,3 +1,70 @@
-<div id="url-list-boarder">
-    <div id="url-list"></div>
-</div>
+<section class="url-panel" aria-labelledby="url-panel-heading">
+  <h2 id="url-panel-heading" class="visually-hidden">Saved links</h2>
+
+  <div class="url-panel__toolbar">
+    <div class="search">
+      <svg
+        class="search__icon"
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <circle cx="6.8" cy="6.8" r="4.6" />
+        <path d="M10.4 10.4 14 14" />
+      </svg>
+      <input
+        type="search"
+        id="url-search"
+        class="search__input"
+        placeholder="Filter links"
+        autocomplete="off"
+        spellcheck="false"
+        aria-describedby="url-search-hint"
+      />
+      <button type="button" id="url-search-clear" class="search__clear" hidden>
+        <span aria-hidden="true">&times;</span>
+        <span class="visually-hidden">Clear filter</span>
+      </button>
+    </div>
+    <button
+      type="button"
+      id="url-collapse-all"
+      class="icon-button"
+      aria-label="Collapse all groups"
+    >
+      <svg
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M4 6l4-3 4 3M4 10l4 3 4-3" />
+      </svg>
+    </button>
+  </div>
+
+  <p id="url-search-hint" class="visually-hidden">
+    Filters the saved links by title or address. Use the up and down arrow keys
+    to move through the list, and Alt with the up or down arrow keys to reorder
+    a link.
+  </p>
+
+  <div id="url-list-scroll">
+    <ul id="url-list" class="url-list"></ul>
+  </div>
+
+  <p
+    id="url-list-status"
+    class="url-list__status"
+    role="status"
+    aria-live="polite"
+  ></p>
+</section>

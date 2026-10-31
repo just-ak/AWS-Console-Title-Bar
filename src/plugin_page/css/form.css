@@ -1,113 +1,262 @@
+/* =========================================================================
+   form.css — buttons and switches
+   `.modern-button`, `.modern-button-warning`, `.modern-button-hidden`,
+   `.switch` and `.slider` class names are preserved; the variants add
+   intent so Save and Delete no longer look identical.
+   ========================================================================= */
 
-.modern-button {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
-    cursor: pointer;
-    border-radius: 12px;
-  }
-  
- 
+.modern-button,
+.modern-button-warning,
+.modern-button-hidden {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--hit-target);
+  margin: 0;
+  padding: var(--sp-3) var(--sp-5);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  background-color: var(--c-bg-raised);
+  color: var(--c-text);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--speed) var(--ease),
+    border-color var(--speed) var(--ease), color var(--speed) var(--ease),
+    box-shadow var(--speed) var(--ease);
+}
 
-  .modern-button:hover {
-    background-color: white;
-    color: black;
-    border: 2px solid #4CAF50;
-  }
+.modern-button:hover,
+.modern-button-warning:hover,
+.modern-button-hidden:hover {
+  border-color: var(--c-border-strong);
+  background-color: var(--c-bg-hover);
+}
 
-  .modern-button-warning {
-    background-color: #af5b4c;
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
-    cursor: pointer;
-    border-radius: 12px;
-  }
-  
+.modern-button:active,
+.modern-button-warning:active {
+  background-color: var(--c-bg-active);
+}
 
-  .modern-button-warning:hover {
-    background-color: white;
-    color: black;
-    border: 2px solid #4CAF50;
-  }
+.modern-button:focus-visible,
+.modern-button-warning:focus-visible,
+.modern-button-hidden:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 2px;
+}
 
-  .modern-button-hidden {
-    background-color: #ffffff;
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
-    cursor: pointer;
-    border-radius: 12px;
-  }
-  
+.modern-button:disabled,
+.modern-button-warning:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
-  .modern-button-hidden:hover {
-    background-color: white;
-    color: black;
-    border: 2px solid #4CAF50;
-  }
+/* --- Primary ------------------------------------------------------------ */
 
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 34px;
-    height: 20px;
-  }
-  
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 34px;
-  }
-  
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 14px;
-    width: 14px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-  }
-  
-  input:checked+.slider {
-    background-color: #4CAF50;
-  }
-  
-  input:checked+.slider:before {
-    transform: translateX(14px);
-  }
-  
+.modern-button--primary {
+  border-color: var(--c-interactive);
+  background-color: var(--c-interactive);
+  color: var(--c-text-on-fill);
+}
+
+.modern-button--primary:hover {
+  border-color: var(--c-interactive-hover);
+  background-color: var(--c-interactive-hover);
+  color: var(--c-text-on-fill);
+}
+
+.modern-button--primary:active {
+  background-color: var(--c-interactive-hover);
+}
+
+/* --- Danger ------------------------------------------------------------- */
+
+.modern-button--danger,
+.modern-button-warning {
+  border-color: var(--c-danger);
+  background-color: var(--c-bg-raised);
+  color: var(--c-danger);
+}
+
+.modern-button--danger:hover,
+.modern-button-warning:hover {
+  border-color: var(--c-danger);
+  background-color: var(--c-danger-subtle);
+  color: var(--c-danger-hover);
+}
+
+/* Armed state for the two-step confirmation on destructive actions. */
+.modern-button.is-armed,
+.modern-button-warning.is-armed {
+  border-color: var(--c-danger);
+  background-color: var(--c-danger);
+  color: var(--c-text-on-fill);
+  box-shadow: 0 0 0 3px var(--c-danger-subtle);
+}
+
+.modern-button.is-armed:hover,
+.modern-button-warning.is-armed:hover {
+  background-color: var(--c-danger-hover);
+  color: var(--c-text-on-fill);
+}
+
+/* --- Ghost / low emphasis ----------------------------------------------
+   `.modern-button-hidden` was `background: #ffffff; color: white` — an
+   invisible button that stayed in the tab order and toggled the global
+   debug flag. It is now a legible, low-emphasis control.
+   ------------------------------------------------------------------------ */
+
+.modern-button-hidden {
+  min-height: 22px;
+  padding: var(--sp-1) var(--sp-4);
+  border-color: transparent;
+  background-color: transparent;
+  color: var(--c-text-faint);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+}
+
+.modern-button-hidden:hover {
+  border-color: var(--c-border);
+  background-color: var(--c-bg-hover);
+  color: var(--c-text-muted);
+}
+
+.modern-button-hidden[aria-pressed="true"] {
+  border-color: var(--c-warning-text);
+  background-color: var(--c-warning-subtle);
+  color: var(--c-warning-text);
+}
+
+/* --- Action rows -------------------------------------------------------- */
+
+.buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: var(--sp-5);
+}
+
+/* --- Switch ------------------------------------------------------------- */
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  min-height: var(--hit-target);
+  padding: var(--sp-2) 0;
+}
+
+.switch-row + .switch-row {
+  border-top: 1px solid var(--c-border);
+}
+
+.switch-row__label {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.switch-row__label > label {
+  color: var(--c-text);
+  font-size: var(--fs-md);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.switch-row__help {
+  color: var(--c-text-muted);
+  font-size: var(--fs-xs);
+  line-height: 1.35;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 22px;
+}
+
+.switch input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.slider {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 1px solid var(--c-border-strong);
+  border-radius: var(--r-pill);
+  background-color: var(--c-bg-active);
+  cursor: pointer;
+  transition: background-color var(--speed) var(--ease),
+    border-color var(--speed) var(--ease);
+}
+
+.slider::before {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--c-bg-raised);
+  box-shadow: var(--shadow-1);
+  content: "";
+  transition: transform var(--speed) var(--ease);
+}
+
+input:checked + .slider {
+  border-color: var(--c-interactive);
+  background-color: var(--c-interactive);
+}
+
+input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+/* The real checkbox is transparent, so the ring has to be painted on the
+   slider. Previously there was no focus indicator at all. */
+.switch input:focus-visible + .slider {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 2px;
+}
+
+/* State is no longer conveyed by colour and position alone. */
+.slider::after {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  color: var(--c-text-muted);
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  content: "OFF";
+  transform: translateY(-50%);
+  transition: opacity var(--speed) var(--ease);
+}
+
+input:checked + .slider::after {
+  right: auto;
+  left: 5px;
+  color: var(--c-text-on-fill);
+  content: "ON";
+}

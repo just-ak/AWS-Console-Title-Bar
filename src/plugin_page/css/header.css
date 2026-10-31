@@ -1,25 +1,114 @@
-#awsso-header {
-  float: right;
-  font-size: 1.2em;
+/* =========================================================================
+   header.css — top app bar
+   ========================================================================= */
+
+.app-header {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-5);
+  border-bottom: 1px solid var(--c-border);
+  background: linear-gradient(180deg, var(--c-brand) 0%, var(--c-brand-2) 100%);
+  color: var(--c-brand-on);
+}
+
+/* Thin brand stripe so the bar reads as AWS without shouting. */
+.app-header::after {
   position: absolute;
-  top: 0px;
-  left: 0px;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background-color: var(--c-accent);
+  content: "";
+}
+
+.app-header__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--c-brand-on);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- Burger / settings toggle -------------------------------------------
+   Was a 0.8em <div> pinned to 0,0 — unreachable by keyboard and a ~10px
+   hit target. Now a real button with a 28px target and an expanded state.
+   ------------------------------------------------------------------------ */
+
+#awsso-header {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: var(--hit-target);
+  height: var(--hit-target);
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  background-color: transparent;
+  color: var(--c-brand-on);
   cursor: pointer;
+  transition: background-color var(--speed) var(--ease),
+    border-color var(--speed) var(--ease);
 }
 
 #awsso-header:hover {
-  background-color: rgb(212, 212, 212);
+  border-color: rgba(255, 255, 255, 0.28);
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+#awsso-header:active {
+  background-color: rgba(255, 255, 255, 0.22);
+}
+
+#awsso-header:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 1px;
+}
+
+#awsso-header[aria-expanded="true"] {
+  border-color: var(--c-accent);
+  background-color: rgba(255, 153, 0, 0.2);
 }
 
 #awsso-header .svg-image {
-  height: 0.8em;
-  margin: 0px;
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin: 0;
 }
 
-h1 {
-  font-size: 1em;
-  width: 100%;
-  text-align: center;
-  margin: 0;
-  padding: 0;
+/* --- Mode badge ---------------------------------------------------------
+   Edit mode silently changes what a click on a link does. Say so.
+   ------------------------------------------------------------------------ */
+
+/* Fixed-width end slot keeps the centred title from shifting when the
+   badge appears. */
+.app-header__end {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: var(--hit-target);
+}
+
+#mode-badge {
+  padding: 1px var(--sp-3);
+  border: 1px solid var(--c-accent);
+  border-radius: var(--r-pill);
+  background-color: rgba(255, 153, 0, 0.2);
+  color: var(--c-brand-on);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }

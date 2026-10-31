@@ -1,15 +1,5 @@
 const getColorFromName = (name: string): string => {
-  const colors = [
-    'blue',
-    'turquoise',
-    'green',
-    'yellow',
-    'orange',
-    'red',
-    'pink',
-    'purple',
-    'toolbar',
-  ];
+  const colors = ['blue', 'turquoise', 'green', 'yellow', 'orange', 'red', 'pink', 'purple', 'toolbar'];
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
     hash = name.charCodeAt(i) + ((hash << 5) - hash);

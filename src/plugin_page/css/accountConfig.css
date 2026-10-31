@@ -1,60 +1,128 @@
-#account-management {
-    margin: 0px 10px 0px 10px;
+/* =========================================================================
+   accountConfig.css — AWS Account tab and Containers tab
+   `#account-form` was duplicated across two partials; the ids are now
+   `#account-form` (AWS Account) and `#containers-form` (Containers).
+   ========================================================================= */
+
+#account-form,
+#containers-form {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
 }
 
-#account-form {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    font-size: 10px;
+#account-management,
+#containers-management {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  margin: 0;
 }
 
+/* --- Per-account colour row (built at runtime by popupcomms.tsx) -------- */
 
-
-
-#account-form .buttons-container {
-    position: absolute;
-    padding-bottom: 42px;
-    bottom: 0;
-    right: 15px;
+#accountConfig {
+  flex: 1 1 auto;
+  min-height: 44px;
 }
 
-#accoutConfig {
-    min-height: 40px;
-    min-width: 40px;
-    height: 100%;
-    width: 100%; 
+#accountConfig form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  width: 100%;
 }
 
+.account-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  min-height: var(--hit-target);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  background-color: var(--c-bg-subtle);
+}
 
-#accoutConfig form {
-    height: 100%;
-    width: 100%;
-    min-width: 40px;
-    min-height: 40px;
-    display: flex;
-    flex-direction: column;
-    font-size: 10px;
-  }
+.account-row__label {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
 
+.account-row__id {
+  color: var(--c-text);
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
 
-  .color-input {
-    color: inherit;
-    background-color: inherit;
-  }
-  
-  #accountConfig input[type='color' i] {
-    appearance: auto;
-    width: 50px;
-    height: 1.2em;
-    cursor: default;
-    box-sizing: unset;
-    background-color: buttonface;
-    color: buttontext;
-    border-width: 0px;
-    border-style: none;
-    border-color: transparent;
-    border-image: none;
-    padding: 0px;
-  }
+.account-row__meta {
+  color: var(--c-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+}
+
+.color-input {
+  width: 64px;
+  min-height: 22px;
+  border: 1px solid var(--c-border-strong);
+  border-radius: var(--r-sm);
+  color: inherit;
+  background-color: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  text-align: center;
+  cursor: pointer;
+}
+
+.color-input:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 2px;
+}
+
+#accountConfig input[type="color" i] {
+  width: 52px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--c-border-strong);
+  border-radius: var(--r-sm);
+  background-color: buttonface;
+  color: buttontext;
+  cursor: pointer;
+  appearance: auto;
+}
+
+/* --- Containers tab ----------------------------------------------------- */
+
+.containers-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: var(--sp-6);
+}
+
+.containers-container .modern-button-hidden {
+  margin-right: auto;
+}
+
+.danger-note {
+  display: flex;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+  border: 1px solid var(--c-danger);
+  border-radius: var(--r-md);
+  background-color: var(--c-danger-subtle);
+  color: var(--c-text);
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+}
+
+.danger-note strong {
+  color: var(--c-danger);
+}

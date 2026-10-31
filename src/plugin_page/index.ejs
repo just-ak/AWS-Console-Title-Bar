@@ -1,50 +1,147 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="color-scheme" content="light dark" />
+    <title>AWS Console Title Bar</title>
+    <link rel="stylesheet" href="../coloris/coloris.css" />
+    <script src="../coloris/coloris.js"></script>
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="../coloris/coloris.css" />
-  <script src="../coloris/coloris.js"></script>
-</head>
+  <body data-mode="run">
+    <div id="firefox-viewport">
+      <%= header %>
+      <main id="app-main">
+        <%= urlList %>
+        <div id="edit-mode" hidden>
+          <div
+            id="tab"
+            class="tab"
+            role="tablist"
+            aria-label="Settings sections"
+          >
+            <button
+              type="button"
+              class="tablinks"
+              data-tab-name="URLForm"
+              role="tab"
+              id="tab-URLForm"
+              aria-controls="URLForm"
+              aria-selected="false"
+              tabindex="-1"
+            >
+              URL
+            </button>
+            <button
+              type="button"
+              class="tablinks"
+              data-tab-name="GroupForm"
+              role="tab"
+              id="tab-GroupForm"
+              aria-controls="GroupForm"
+              aria-selected="false"
+              tabindex="-1"
+            >
+              Groups
+            </button>
+            <button
+              type="button"
+              class="tablinks"
+              data-tab-name="Preferences"
+              role="tab"
+              id="tab-Preferences"
+              aria-controls="Preferences"
+              aria-selected="false"
+              tabindex="-1"
+            >
+              Console
+            </button>
+            <button
+              type="button"
+              class="tablinks"
+              data-tab-name="AccountConfig"
+              role="tab"
+              id="tab-AccountConfig"
+              aria-controls="AccountConfig"
+              aria-selected="false"
+              tabindex="-1"
+            >
+              Account
+            </button>
+            <button
+              type="button"
+              class="tablinks"
+              data-tab-name="Containers"
+              role="tab"
+              id="tab-Containers"
+              aria-controls="Containers"
+              aria-selected="false"
+              tabindex="-1"
+            >
+              Containers
+            </button>
+          </div>
 
-<body>
-  <div id="firefox-viewport">
-    <%= header %>
-    <%= urlList %>
-    <div id="edit-mode">
-      <div id="tab" class="tab">
-        <button class="tablinks" data-tab-name="URLForm">URL </button>
-        <button class="tablinks" data-tab-name="GroupForm">Groups</button>
-        <button class="tablinks" data-tab-name="Preferences">AWS Settings</button>
-        <button class="tablinks" data-tab-name="AccountConfig">AWS Account</button>
-        <button class="tablinks" data-tab-name="Containers">Containers</button>
-      </div>
-      <div id="URLForm" class="tabcontent">
-        <%= urlForm %>
-      </div>
-    
-      <div id="GroupForm" class="tabcontent">
-        <%= groupForm %>
-      </div>
-    
-      <div id="Preferences" class="tabcontent">
-        <%= preferences %>
-      </div>
+          <div
+            id="URLForm"
+            class="tabcontent"
+            role="tabpanel"
+            aria-labelledby="tab-URLForm"
+            tabindex="0"
+            hidden
+          >
+            <%= urlForm %>
+          </div>
 
-      <div id="AccountConfig" class="tabcontent">
-        <%= accountConfig %>
-      </div>
-      <div id="Containers" class="tabcontent">
-        <%= containers %>
-      </div>
+          <div
+            id="GroupForm"
+            class="tabcontent"
+            role="tabpanel"
+            aria-labelledby="tab-GroupForm"
+            tabindex="0"
+            hidden
+          >
+            <%= groupForm %>
+          </div>
 
-    <!-- <div id="hiddenBox">&nbsp;</div> -->
-    <div id="add-url-container">
-     
+          <div
+            id="Preferences"
+            class="tabcontent"
+            role="tabpanel"
+            aria-labelledby="tab-Preferences"
+            tabindex="0"
+            hidden
+          >
+            <%= preferences %>
+          </div>
+
+          <div
+            id="AccountConfig"
+            class="tabcontent"
+            role="tabpanel"
+            aria-labelledby="tab-AccountConfig"
+            tabindex="0"
+            hidden
+          >
+            <%= accountConfig %>
+          </div>
+
+          <div
+            id="Containers"
+            class="tabcontent"
+            role="tabpanel"
+            aria-labelledby="tab-Containers"
+            tabindex="0"
+            hidden
+          >
+            <%= containers %>
+          </div>
+
+          <!-- Retained for script compatibility (scripts/dom.tsx); no layout. -->
+          <div id="add-url-container"></div>
+        </div>
+      </main>
+      <%= footer %>
     </div>
-  </div>
-    <%= footer %>
-  </div>
-</body>
-
+  </body>
 </html>

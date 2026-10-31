@@ -1,33 +1,406 @@
-/* Notes:
+/* =========================================================================
+   base.css — design tokens, reset and page shell
+   This file is imported FIRST by scripts/pluginPage.tsx, so everything
+   declared here sits at the bottom of the cascade and can be overridden
+   by the component stylesheets that follow.
 
-    Firefox restricts developers from explicitly resizing the popup via JavaScript for security reasons.
-    The popup size is limited by Firefox: minimum size is 48x48px,
-     and the maximum size is 800x600px.
-*/
+   Notes:
+     Firefox restricts developers from explicitly resizing the popup via
+     JavaScript for security reasons. A browser action popup is capped at
+     800px wide x 600px tall (minimum 48x48). See scripts/body.tsx.
+   ========================================================================= */
+
+:root {
+  color-scheme: light dark;
+
+  /* --- Brand ----------------------------------------------------------- */
+  --c-brand: #232f3e; /* AWS squid ink */
+  --c-brand-2: #31465f;
+  --c-brand-on: #ffffff;
+  --c-accent: #ff9900; /* AWS orange — indicators only, never text */
+
+  /* --- Surfaces -------------------------------------------------------- */
+  --c-bg: #ffffff;
+  --c-bg-subtle: #f5f7fa;
+  --c-bg-raised: #ffffff;
+  --c-bg-hover: #eef2f7;
+  --c-bg-active: #e2e8f0;
+
+  /* --- Lines ----------------------------------------------------------- */
+  --c-border: #d8dee7;
+  --c-border-strong: #b4bdc9;
+
+  /* --- Text ------------------------------------------------------------ */
+  --c-text: #1a1f26;
+  --c-text-muted: #5a6572;
+  --c-text-faint: #808b99;
+  --c-text-on-fill: #ffffff;
+
+  /* --- Intent ---------------------------------------------------------- */
+  --c-interactive: #0f6cbd;
+  --c-interactive-hover: #0a5496;
+  --c-interactive-subtle: #e9f2fb;
+
+  --c-success: #1c7a3e;
+  --c-success-hover: #15602f;
+  --c-success-subtle: #e8f6ec;
+
+  --c-danger: #b3242d;
+  --c-danger-hover: #8f1a22;
+  --c-danger-subtle: #fdedee;
+
+  --c-warning-text: #7a4a00;
+  --c-warning-subtle: #fff5e6;
+
+  --c-focus: #1a73e8;
+
+  /* --- Group rail palette (URL list) ----------------------------------- */
+  --c-rail-1: #0f6cbd;
+  --c-rail-2: #7a4bbd;
+  --c-rail-3: #0b7a6b;
+  --c-rail-4: #b35c00;
+  --c-rail-5: #a63a6b;
+  --c-rail-6: #4a6a1f;
+
+  /* --- Type ------------------------------------------------------------ */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --fs-xs: 10.5px;
+  --fs-sm: 11.5px;
+  --fs-md: 12.5px;
+  --fs-lg: 14px;
+  --fs-xl: 15px;
+  --lh-tight: 1.25;
+  --lh: 1.45;
+
+  /* --- Space (4px scale) ----------------------------------------------- */
+  --sp-0: 0;
+  --sp-1: 2px;
+  --sp-2: 4px;
+  --sp-3: 6px;
+  --sp-4: 8px;
+  --sp-5: 12px;
+  --sp-6: 16px;
+  --sp-7: 20px;
+  --sp-8: 24px;
+
+  /* --- Radius / elevation ---------------------------------------------- */
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 10px;
+  --r-pill: 999px;
+
+  --shadow-1: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.1);
+  --shadow-2: 0 4px 12px rgba(16, 24, 40, 0.12);
+
+  /* --- Motion ---------------------------------------------------------- */
+  --speed-fast: 90ms;
+  --speed: 150ms;
+  --ease: cubic-bezier(0.2, 0, 0.2, 1);
+
+  /* --- Layout ---------------------------------------------------------- */
+  --popup-width: 384px;
+  --hit-target: 28px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-brand: #161b22;
+    --c-brand-2: #21262d;
+    --c-brand-on: #f0f6fc;
+
+    --c-bg: #1b2027;
+    --c-bg-subtle: #22272e;
+    --c-bg-raised: #242a31;
+    --c-bg-hover: #2d333b;
+    --c-bg-active: #353c45;
+
+    --c-border: #343b44;
+    --c-border-strong: #4a525c;
+
+    --c-text: #e6edf3;
+    --c-text-muted: #a7b1bd;
+    --c-text-faint: #8b949e;
+
+    --c-interactive: #6cb6ff;
+    --c-interactive-hover: #91c9ff;
+    --c-interactive-subtle: #1b2b3d;
+
+    --c-success: #46a35e;
+    --c-success-hover: #57b86f;
+    --c-success-subtle: #16291c;
+
+    --c-danger: #e5646e;
+    --c-danger-hover: #f07d86;
+    --c-danger-subtle: #2c1b1d;
+
+    --c-warning-text: #e3b341;
+    --c-warning-subtle: #2a2113;
+
+    --c-focus: #6cb6ff;
+
+    --c-rail-1: #6cb6ff;
+    --c-rail-2: #b392f0;
+    --c-rail-3: #39c5a5;
+    --c-rail-4: #e0a85f;
+    --c-rail-5: #e884b3;
+    --c-rail-6: #a3c94e;
+
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* =========================================================================
+   Reset
+   ========================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 html {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  font-size: var(--fs-md);
+  line-height: var(--lh);
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
-  width: 340px;
-  padding: 0px;
-  margin: 0px;
-  padding: 0px;
-  min-height: 250px;
-  max-height: 800px;
-  max-width: 600px;
-  overflow: hidden;
+  width: var(--popup-width);
+  min-width: 320px;
+  max-width: 800px;
+  min-height: 200px;
+  max-height: 600px;
+  margin: 0;
+  padding: 0;
+  /* Safety valve. `overflow: hidden` used to clip anything past the popup
+     cap with no way to reach it. The content is sized to fit inside 600px,
+     so this should not normally engage.
+     Only <body> scrolls — giving an inner wrapper its own scrollbar makes
+     the measure-then-resize pass in body.tsx oscillate. */
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: var(--c-bg);
+  color: var(--c-text);
+  font-size: var(--fs-md);
 }
 
+h1,
+h2,
+h3,
+p,
+ul,
+ol,
+figure {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* =========================================================================
+   Focus — a single, visible, consistent ring everywhere.
+   ========================================================================= */
+
+:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* Older engines / forced fallback: never leave a control with no indicator. */
+.no-focus-visible-support :focus {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 2px;
+}
+
+/* =========================================================================
+   Utilities
+   ========================================================================= */
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================================
+   Page shell
+   ========================================================================= */
+
 #firefox-viewport {
-  padding-bottom:40px;
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  background-color: var(--c-bg);
+}
+
+#app-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--sp-5);
+  min-height: 0;
+  padding: var(--sp-5);
 }
 
 #edit-mode {
-  margin: 10px;
-  margin-top: 15px;
-  margin-bottom: 25px;
-  border-radius: 1%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin: 0;
 }
 
+/* Legacy container kept for script compatibility; carries no layout. */
+#add-url-container {
+  display: none;
+}
+
+/* =========================================================================
+   Shared panel + field primitives used by every tab panel
+   ========================================================================= */
+
+.panel__title {
+  margin: 0 0 var(--sp-3);
+  color: var(--c-text);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.panel__hint {
+  margin: 0 0 var(--sp-5);
+  color: var(--c-text-muted);
+  font-size: var(--fs-xs);
+  line-height: 1.35;
+}
+
+.field {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-3);
+}
+
+.field > label {
+  color: var(--c-text-muted);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  text-align: left;
+}
+
+.text-input,
+.select-input {
+  width: 100%;
+  min-height: var(--hit-target);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  background-color: var(--c-bg-raised);
+  color: var(--c-text);
+  font-size: var(--fs-md);
+  transition: border-color var(--speed) var(--ease),
+    box-shadow var(--speed) var(--ease);
+}
+
+.text-input::placeholder {
+  color: var(--c-text-faint);
+}
+
+.text-input:hover,
+.select-input:hover {
+  border-color: var(--c-border-strong);
+}
+
+.text-input:focus,
+.select-input:focus {
+  border-color: var(--c-interactive);
+  box-shadow: 0 0 0 3px var(--c-interactive-subtle);
+  outline: none;
+}
+
+.text-input:focus-visible,
+.select-input:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 1px;
+}
+
+.text-input[aria-invalid="true"] {
+  border-color: var(--c-danger);
+  box-shadow: 0 0 0 3px var(--c-danger-subtle);
+}
+
+.select-input {
+  padding-right: var(--sp-7);
+  cursor: pointer;
+}
+
+/* Inline status / validation messaging. Paired with role="status". */
+.form-status {
+  display: block;
+  min-height: 1.3em;
+  margin-top: var(--sp-3);
+  color: var(--c-text-muted);
+  font-size: var(--fs-sm);
+  line-height: 1.3;
+}
+
+.form-status[data-tone="error"] {
+  color: var(--c-danger);
+  font-weight: 600;
+}
+
+.form-status[data-tone="success"] {
+  color: var(--c-success);
+  font-weight: 600;
+}
+
+.form-status[data-tone="warning"] {
+  color: var(--c-warning-text);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

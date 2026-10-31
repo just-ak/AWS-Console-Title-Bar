@@ -1,5 +1,27 @@
-<h1>AWS Console Title Bar</h1>
-
-<div id="awsso-header">
-  <img src="../icons/hamburger.svg" class="svg-image" alt="SVG Image" />
-</div>
+<header class="app-header">
+  <button
+    type="button"
+    id="awsso-header"
+    class="app-header__menu"
+    aria-expanded="false"
+    aria-controls="edit-mode"
+  >
+    <svg
+      class="svg-image"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linecap="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M2 4h12M2 8h12M2 12h12" />
+    </svg>
+    <span class="visually-hidden" id="awsso-header-label">Show settings</span>
+  </button>
+  <h1 class="app-header__title">AWS Console Title Bar</h1>
+  <div class="app-header__end">
+    <span id="mode-badge" hidden>Edit</span>
+  </div>
+</header>

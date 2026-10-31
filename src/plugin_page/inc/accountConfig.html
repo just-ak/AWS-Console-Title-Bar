@@ -1,7 +1,16 @@
-<form id="account-form">
-    <div id="account-management">
-        <h2>AWS Account Preferences</h2>
-        <div id="accountConfig">
-        </div>
+<form id="account-form" novalidate>
+  <div id="account-management">
+    <h2 class="panel__title">AWS Account Preferences</h2>
+    <p class="panel__hint">
+      Sets the banner colour for the AWS account open in the active tab.
+    </p>
+
+    <div id="accountConfig" aria-live="polite">
+      <p class="url-list__empty">
+        <strong>No AWS account detected</strong>
+        Open an AWS console tab, then reopen this popup to set its banner
+        colour.
+      </p>
     </div>
+  </div>
 </form>

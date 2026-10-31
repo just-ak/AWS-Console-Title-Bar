@@ -1,61 +1,87 @@
-import { getAllAccounts, saveAllAccounts } from "../../common/reference";
+import { getAllAccounts, saveAllAccounts, debugLog } from '../../common/reference';
+import { accountConfigDiv } from './dom';
 
 export function initializePopupComs() {
+  document.addEventListener('DOMContentLoaded', function () {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (!tabs.length || tabs[0].id === undefined) return;
+      chrome.tabs.sendMessage(tabs[0].id, 'popupcomms', (response) => {
+        if (response && response.accountId) {
+          showSingleAccount(response.accountId);
+        } else {
+          // Not an AWS console tab. The panel keeps its empty state.
+          debugLog('No accountId in popupcomms response');
+        }
+      });
+    });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            chrome.tabs.sendMessage(tabs[0].id, 'popupcomms', (response) => {
-                if (response) {
-                    if (response.accountId) {
-                        showSingleAccount(response.accountId);
-                    } else {
-                        console.error('accountId is undefined in response:', response);
-                    }
-                }
+    const showSingleAccount = (accountId: string) => {
+      const container = accountConfigDiv;
+      if (!container) return;
+
+      getAllAccounts().then((jsonData) => {
+        const account = jsonData[accountId];
+        if (!account) return;
+
+        container.textContent = '';
+
+        const inputId = `account-color-${accountId}`;
+        const row = document.createElement('div');
+        row.className = 'account-row';
+
+        const labelWrap = document.createElement('span');
+        labelWrap.className = 'account-row__label';
+
+        // A real <label for> pairing. The colour field used to be unlabelled.
+        const label = document.createElement('label');
+        label.className = 'account-row__id';
+        label.htmlFor = inputId;
+        label.textContent = account.id;
+        labelWrap.appendChild(label);
+
+        const meta = document.createElement('span');
+        meta.className = 'account-row__meta';
+        meta.textContent = accountId;
+        labelWrap.appendChild(meta);
+        row.appendChild(labelWrap);
+
+        const colorInput = document.createElement('input');
+        colorInput.id = inputId;
+        colorInput.type = 'text';
+        colorInput.className = 'color-input';
+        colorInput.dataset.coloris = '';
+        // The account id is carried as data instead of being parsed back out
+        // of the label's text content.
+        colorInput.dataset.accountId = accountId;
+        colorInput.value = account.color;
+        colorInput.style.color = account.color;
+        colorInput.style.backgroundColor = account.color;
+
+        colorInput.addEventListener('change', function (event) {
+          const input = event.target as HTMLInputElement;
+          const selectedColor = input.value;
+          const targetAccountId = input.dataset.accountId;
+
+          getAllAccounts().then((data) => {
+            if (!data[targetAccountId]) return;
+            data[targetAccountId].color = selectedColor;
+            input.style.color = selectedColor;
+            input.style.backgroundColor = selectedColor;
+            saveAllAccounts(data).finally(() => {
+              chrome.tabs.query({ active: true, currentWindow: true }, (openTabs) => {
+                if (!openTabs.length || openTabs[0].id === undefined) return;
+                chrome.tabs.sendMessage(openTabs[0].id, `updateColour:${selectedColor}`, () => true);
+              });
             });
+          });
         });
 
-        const showSingleAccount = (accountId) => {
-            const container = document.getElementById('accountConfig');
-            while (container.firstChild) {
-                container.removeChild(container.firstChild);
-            }
-            getAllAccounts().then((jsonData) => {
-                const form = document.createElement('form');
-                const account = jsonData[accountId];
-                const accountDiv = document.createElement('div');
-                const nameLabel = document.createElement('label');
-                nameLabel.textContent = account.id + ': ' + accountId;
-                accountDiv.appendChild(nameLabel);
-                const colorInput = document.createElement('input');
-                colorInput.classList.add('color-input'); // Add class for styling
-                colorInput.dataset.coloris = '';
-                colorInput.value = account.color;
-                colorInput.addEventListener('change', function (event) {
-                    const selectedColor = (event.target as HTMLInputElement).value;
-                    const accountId = (event.target as HTMLInputElement).parentNode
-                        .querySelector('label')
-                        .textContent.split(':')[1]
-                        .trim();
-                    getAllAccounts().then((data) => {
-                        data[accountId].color = selectedColor;
-                        colorInput.style.color = selectedColor;
-                        colorInput.style.backgroundColor = selectedColor;
-                        saveAllAccounts(data).finally(() => {
+        row.appendChild(colorInput);
 
-                            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                                chrome.tabs.sendMessage(tabs[0].id, `updateColour:${selectedColor}`, (response) => {
-                                    return true;
-                                });
-                            });
-                        });
-                    });
-                });
-
-                accountDiv.appendChild(colorInput);
-                form.appendChild(accountDiv);
-                container.appendChild(form);
-            });
-        };
-    });
-};
+        const form = document.createElement('form');
+        form.appendChild(row);
+        container.appendChild(form);
+      });
+    };
+  });
+}

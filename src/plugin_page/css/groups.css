@@ -1,101 +1,39 @@
-#group-management {
-    margin: 0px 10px 0px 10px;
-}
+/* =========================================================================
+   groups.css — Groups tab
+   ========================================================================= */
 
 #group-form {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    font-size: 10px;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
 }
 
-#group-form .buttons-container {
-    position: absolute;
-    padding-bottom: 42px;
-    bottom: 0;
-    right: 15px;
+#group-management {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  margin: 0;
 }
 
-
-.group-title {
-    font-weight: bold;
-    margin-top: 10px;
-    text-align: left;
+#group-management .field {
+  grid-template-columns: 54px 1fr;
 }
 
-.group-select-container {
-    display: flex;
-    align-items: center;
-    padding-right: 10px;
-}
-
-.group-select-container select {
-    flex: 1;
-    margin-right: 5px;
-    padding-right: 10px;
-}
-
-.group-select-container input {
-    flex: 1;
-    width: 50%;
-    padding-right: 10px;
-}
-
-.form-group {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    margin-bottom: 1px;
-}
-
-.form-group label {
-    flex: 0 0 50px;
-    text-align: left;
-    margin-right: 3px;
-}
-
-.form-group input,
-.form-group select {
-    flex: 1;
-}
-
-
-#group-management input {
-    width: 70%;
-    margin: 2px;
-}
-
-#group-management .modern-button {
-    margin-top: 10px;
-}
-
-#group-list-container {
-    margin-top: 2px;
-    text-align: left;
-    font-size: 0.9em;
-    margin: 0px 10px 0px 10px;
-}
-
-#group-list {
-    margin-top: 1px;
-    height: 3em;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-
-}
-
-.group-item {
-    padding: 1px;
-    border-bottom: 1px solid #ccc;
-}
-
-.group-item:hover {
-    background-color: #f0f0f0;
-}
+/* `.group-title` is also the group row inside the URL list; those rules
+   live in urlList.css and are scoped under #url-list so they do not
+   collide with this form. */
 
 #group-warning {
-    color: red;
-    font-weight: bold;
-    margin-top: 10px;
+  display: block;
+  min-height: 1.3em;
+  margin-top: var(--sp-4);
+  color: var(--c-danger);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+#group-warning:empty {
+  margin-top: 0;
 }

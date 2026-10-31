@@ -1,47 +1,57 @@
+/* =========================================================================
+   footer.css — bottom bar
+   Was two `position: fixed` pills with negative offsets and a 0.8 scale,
+   overlapping the form buttons. Now a single in-flow bar.
+   ========================================================================= */
+
+.app-footer {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-3) var(--sp-5);
+  border-top: 1px solid var(--c-border);
+  background-color: var(--c-bg-subtle);
+}
 
 #help-footer {
-    position: fixed;
-    bottom: -5px;
-    left: -20px;
-    transform: scale(0.8);
-    transform-origin: bottom right;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    padding-right: 5%;
-  }
-  
-  #help-button {
-    font-size: 0.8em;
-    color: #495057;
-    font-weight: bold;
-    cursor: pointer;
-  }
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
 
+#help-button,
+#github-button {
+  min-height: 22px;
+  padding: var(--sp-1) var(--sp-4);
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background-color: transparent;
+  color: var(--c-interactive);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--speed) var(--ease),
+    border-color var(--speed) var(--ease);
+}
+
+#help-button:hover,
+#github-button:hover {
+  border-color: var(--c-border);
+  background-color: var(--c-bg-hover);
+  color: var(--c-interactive-hover);
+}
 
 #awsso-footer {
-    position: fixed;
-    bottom: 0px;
-    right: 0;
-    transform: scale(0.8);
-    transform-origin: bottom right;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    padding-right: 5%;
-  }
-  
-  #version-number {
-    font-size: 0.8em;
-    color: #495057;
-    font-weight: bold;
-  }
-  
+  display: flex;
+  align-items: center;
+}
+
+#version-number {
+  color: var(--c-text-faint);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  white-space: nowrap;
+}
