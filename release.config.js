@@ -78,8 +78,19 @@ module.exports = {
     [
       "@semantic-release/git",
       {
+        // scripts/syncVersions.ts writes the version into several files, but
+        // only package.json was committed back. That is why src/manifest.json
+        // shipped as 7.8.18 under tag v7.8.19, why package-lock.json was left
+        // claiming 7.8.1, and why CHANGELOG.md stopped at 5.16.17 while
+        // releases continued — the generated changelog was never committed.
         assets: [
-          "package.json"
+          "package.json",
+          "package-lock.json",
+          "CHANGELOG.md",
+          "website/package.json",
+          "website/package-lock.json",
+          "src/manifest.json",
+          "src/plugin_page/inc/footer.html"
         ]
       }
     ]
