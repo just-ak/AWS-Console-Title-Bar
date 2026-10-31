@@ -5,26 +5,39 @@ on:
     branches:
       - main
 
+# Without this, two pushes in quick succession run two releases at once and
+# race each other on tagging.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   submit_extension:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
       contents: write
       issues: write
       pull-requests: write
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          # semantic-release needs the full history and every tag to find the
+          # previous release and analyse the commits since it. The default
+          # shallow clone leaves it guessing.
+          fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
+          cache: npm
 
-      - name: Install Dependencies
-        run: npm install    
+      - name: Install dependencies
+        # npm ci honours the lockfile and fails loudly when it disagrees with
+        # package.json; npm install would quietly resolve something else.
+        run: npm ci
 
       - name: Run release
         id: release
@@ -33,11 +46,6 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GIT_AUTHOR_NAME: akfdev-sr
           GIT_AUTHOR_EMAIL: andrew@akfdev.com
-          GIT_COMMITTER_NAME: akfedv-sr
+          GIT_COMMITTER_NAME: akfdev-sr
           GIT_COMMITTER_EMAIL: andrew@akfdev.com
-        run: |
-          npm config set registry https://npm.pkg.github.com/
-          npm config set //npm.pkg.github.com/:_authToken $GH_TOKEN
-          npx semantic-release
-
-
+        run: npx semantic-release

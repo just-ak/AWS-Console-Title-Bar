@@ -1,0 +1,10 @@
+node_modules/
+dist/
+archive/
+
+# Vendored colour picker, not our code to style.
+src/coloris/
+
+# The website is a separate package with its own flat config and its own
+# `npm run lint`. Linting it from here applies the wrong ruleset.
+website/

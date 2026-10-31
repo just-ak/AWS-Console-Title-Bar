@@ -54,7 +54,13 @@ module.exports = {
       }
     ],
     ["@semantic-release/exec", {
-      // "verifyConditionsCmd": "./verify.sh",
+      // Gate the release on lint and a clean build. The only build previously
+      // ran inside publishCmd, i.e. after the version had been chosen and the
+      // tag created, so a broken build produced a half-finished release.
+      // webpack is called directly rather than via `npm run build` so this
+      // check does not run sync-versions and rewrite version files before
+      // semantic-release has decided the next version.
+      "verifyConditionsCmd": "npm run lint && npx webpack --mode production",
       "publishCmd": "npm run archive ${nextRelease.version}"
     }],
     [
