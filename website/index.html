@@ -1,19 +1,95 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AWS Console Title Bar</title>
-  </head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NBR7CY8D63"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
 
-    gtag('config', 'G-NBR7CY8D63');
-  </script>
+    <title>AWS Console Title Bar — see which AWS account you're in, free</title>
+    <meta
+      name="description"
+      content="A free, open-source browser extension that puts the AWS account name and a colour you choose straight into the AWS console header. Stop running commands in the wrong account. Chrome and Firefox."
+    />
+    <link rel="canonical" href="https://aws-console-title-bar.akfdev.com/" />
+    <meta name="theme-color" content="#232f3e" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+
+    <!-- Open Graph / social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AWS Console Title Bar" />
+    <meta
+      property="og:url"
+      content="https://aws-console-title-bar.akfdev.com/"
+    />
+    <meta
+      property="og:title"
+      content="Know which AWS account you're in — at a glance"
+    />
+    <meta
+      property="og:description"
+      content="Free, open-source extension that labels and colour-codes the AWS console header per account. Chrome and Firefox."
+    />
+    <meta
+      property="og:image"
+      content="https://aws-console-title-bar.akfdev.com/og-image.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="The AWS console header with an account name highlighted in green"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Know which AWS account you're in — at a glance"
+    />
+    <meta
+      name="twitter:description"
+      content="Free, open-source extension that labels and colour-codes the AWS console header per account."
+    />
+    <meta
+      name="twitter:image"
+      content="https://aws-console-title-bar.akfdev.com/og-image.png"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "AWS Console Title Bar",
+        "applicationCategory": "BrowserApplication",
+        "operatingSystem": "Chrome, Firefox",
+        "url": "https://aws-console-title-bar.akfdev.com/",
+        "description": "A browser extension that displays the AWS account name, with a colour you choose, in the AWS console header so you always know which account you are working in.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "isAccessibleForFree": true,
+        "author": {
+          "@type": "Organization",
+          "name": "AKFDEV",
+          "url": "https://akfdev.com"
+        }
+      }
+    </script>
+
+    <!-- Google tag (gtag.js). This previously sat outside the head, which was invalid markup. -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-NBR7CY8D63"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-NBR7CY8D63");
+    </script>
+  </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
